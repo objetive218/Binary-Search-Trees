@@ -1,11 +1,7 @@
-export default function node(
-  data = null,
-  rightChildren = null,
-  leftChildren = null
-) {
+export default function node(data = null, left = null, right = null) {
   return {
     data: data,
-    rightChildren: rightChildren,
-    leftChildren: leftChildren,
+    left: left,
+    right: right,
   };
 }
