@@ -27,13 +27,14 @@ export default function tree(arr) {
   }
 
   function insert(value, tree = newNode) {
-    if (value === tree?.data) {
-      return tree;
-    } else if (value < tree?.data) {
-      return (tree = find(value, tree.left));
-    } else if (value > tree?.data) {
-      return (tree = find(value, tree.right));
+    if (tree === null) {
+      return node(value);
+    } else if (tree.data < value) {
+      tree = insert(value, tree.left);
+    } else if (tree.data > value) {
+      tree = insert(value, tree.right);
     }
+    return tree;
   }
   function deleteItem(value, nodo = newNode) {
     if (nodo === null) return nodo;
@@ -51,14 +52,13 @@ export default function tree(arr) {
     return nodo;
   }
 
-  function find(value, node = newNode) {
-    if (node === null) return null;
-    if (node.data < value) {
-      node = find(value, node.left);
-    } else if (node.data > value) {
-      node = find(value, node.right);
-    } else if (node.data === value) {
-      return node;
+  function find(value, tree = newNode) {
+    if (value === tree?.data) {
+      return tree;
+    } else if (value < tree?.data) {
+      return (tree = find(value, tree.left));
+    } else if (value > tree?.data) {
+      return (tree = find(value, tree.right));
     }
   }
   function levelOrder(callback) {}
