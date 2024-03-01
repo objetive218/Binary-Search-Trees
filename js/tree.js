@@ -6,21 +6,55 @@ export default function tree(arr) {
     return self.indexOf(value) === index;
   });
   function buildTree(orderArr) {
-    let end = orderArr.length - 1;
-    if (0 > end) return null;
-    let mid = parseInt((start + end) / 2);
-    let node = node(
+    let end = orderArr.length;
+    if (orderArr.length === 0) return null;
+    let mid = parseInt(end / 2);
+    let newNode = node(
       orderArr[mid],
-      buildTree(orderArr.splice(0, mid)),
-      buildTree(orderArr.splice(mid + 1))
+      buildTree(orderArr.slice(0, mid)),
+      buildTree(orderArr.slice(mid + 1))
     );
 
-    return node;
+    return newNode;
+  }
+  function minDataValue(nodo) {
+    let minV = nodo.date;
+    while (nodo.left !== null) {
+      minV = nodo.left.data;
+      nodo = nodo.left;
+    }
+    return minV;
   }
 
-  function insert(value) {}
-  function deleteItem(value) {}
-  function find(value) {}
+  function insert(value, tree = newNode) {
+    if (tree === null) {
+      return node(value);
+    } else if (tree.data < value) {
+      tree = insert(value, tree.left);
+    } else if (tree.data > value) {
+      tree = insert(value, tree.right);
+    }
+    return tree;
+  }
+  function deleteItem(value, nodo = newNode) {
+    if (nodo === null) return nodo;
+    if (value > nodo.data) {
+      deleteItem(value, nodo.right);
+    } else if (value < nodo.data) {
+      deleteItem(value, nodo.left);
+    } else {
+      if (nodo.left === null) return nodo.right;
+      if (nodo.right === null) return nodo.left;
+
+      nodo.data = minDataValue(nodo.right);
+      nodo.right = deleteItem(nodo.data, nodo.right);
+    }
+    return nodo;
+  }
+
+  function find(value) {
+    
+  }
   function levelOrder(callback) {}
   function inOrder(callback) {}
   function preOrder(callback) {}
