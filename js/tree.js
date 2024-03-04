@@ -86,8 +86,22 @@ export default function tree(arr) {
     if (tree.right) levelOrder(callback, tree.right, preOrderArr);
     return preOrderArr;
   }
-  function inOrder(callback) {}
-  function postOrder(callback) {}
+  function inOrder(callback, tree = newNode, inOrderArr = []) {
+    if (tree === null) return null;
+    inOrder(callback, tree.left, inOrderArr);
+    callback(tree);
+    inOrderArr.push(tree.data);
+    inOrder(callback, tree.right, inOrderArr);
+    return inOrderArr;
+  }
+  function postOrder(callback, tree = newNode, postOrderArr = []) {
+    if (tree === null) return null;
+    inOrder(callback, tree.left, postOrderArr);
+    inOrder(callback, tree.right, postOrderArr);
+    callback(tree);
+    postOrderArr.push(tree.data);
+    return postOrderArr;
+  }
   function height(node) {}
   function depth(node) {}
   function isBalanced() {}
