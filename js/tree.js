@@ -61,9 +61,32 @@ export default function tree(arr) {
       return (tree = find(value, tree.right));
     }
   }
-  function levelOrder(callback) {}
+  function levelOrder(callback, tree = newNode) {
+    let queue = [tree];
+    let result = [tree.data];
+    while (queue.length > 0) {
+      let node = queue.shift();
+      callback ? callback(node) : "";
+      if (node.left) {
+        queue.push(node.left);
+        result.push(node.left.data);
+      }
+      if (node.right) {
+        queue.push(node.right);
+        result.push(node.right.data);
+      }
+    }
+    return result;
+  }
+  function preOrder(callback, tree = newNode, preOrderArr = []) {
+    if (tree === null) return [];
+    callback(tree);
+    preOrderArr.push(tree.data);
+    if (tree.left) levelOrder(callback, tree.left, preOrderArr);
+    if (tree.right) levelOrder(callback, tree.right, preOrderArr);
+    return preOrderArr;
+  }
   function inOrder(callback) {}
-  function preOrder(callback) {}
   function postOrder(callback) {}
   function height(node) {}
   function depth(node) {}
