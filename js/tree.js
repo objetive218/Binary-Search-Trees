@@ -102,8 +102,23 @@ export default function tree(arr) {
     postOrderArr.push(tree.data);
     return postOrderArr;
   }
-  function height(node) {}
-  function depth(node) {}
+  function height(node, tree = newNode) {
+    if (node === null) return -1;
+    let left = node ? height(node.left) : height(tree.left);
+    let right = node ? height(node.right) : height(tree.right);
+    return Math.max(left, right) + 1;
+  }
+  function depth(node, tree = newNode) {
+    if (tree === null) return -1;
+    let count = -1;
+    if (
+      tree?.data === node?.data ||
+      (count = depth(node, tree?.left)) >= 0 ||
+      (count = depth(node, tree?.right)) >= 0
+    )
+      return count + 1;
+    return count;
+  }
   function isBalanced() {}
   function rebalance() {}
   return {
