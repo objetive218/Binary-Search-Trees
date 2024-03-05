@@ -5,14 +5,21 @@ export default function tree(arr) {
   let orderArr = arr.filter((value, index, self) => {
     return self.indexOf(value) === index;
   });
-  function buildTree(orderArr) {
-    let end = orderArr.length;
-    if (orderArr.length === 0) return null;
+  function sortArr(arr) {
+    arr.sort((a, b) => a - b);
+    return arr.filter((value, index, self) => {
+      return self.indexOf(value) === index;
+    });
+  }
+  function buildTree(arr) {
+    const newOrderArr = sortArr(arr);
+    let end = newOrderArr.length;
+    if (newOrderArr.length === 0) return null;
     let mid = parseInt(end / 2);
     let newNode = node(
-      orderArr[mid],
-      buildTree(orderArr.slice(0, mid)),
-      buildTree(orderArr.slice(mid + 1))
+      newOrderArr[mid],
+      buildTree(newOrderArr.slice(0, mid)),
+      buildTree(newOrderArr.slice(mid + 1))
     );
 
     return newNode;
@@ -30,9 +37,9 @@ export default function tree(arr) {
     if (tree === null) {
       return node(value);
     } else if (tree.data < value) {
-      tree = insert(value, tree.left);
+      tree.left = insert(value, tree.left);
     } else if (tree.data > value) {
-      tree = insert(value, tree.right);
+      tree.right = insert(value, tree.right);
     }
     return tree;
   }
@@ -119,8 +126,24 @@ export default function tree(arr) {
       return count + 1;
     return count;
   }
-  function isBalanced() {}
-  function rebalance() {}
+  function isBalanced(tree = newNode) {
+    if (tree === null) return true;
+    let lh = height(tree.left);
+    let rh = height(tree.right);
+    if (
+      Math.abs(lh - rh) <= 1 &&
+      isBalanced(tree.left) &&
+      isBalanced(tree.right)
+    )
+      return true;
+    return false;
+  }
+
+  function rebalance() {
+    let orderArr = inOrder(null, newNode);
+    let rebalanceTree = buildTree(orderArr);
+    return rebalanceTree;
+  }
   return {
     insert,
     deleteItem,
