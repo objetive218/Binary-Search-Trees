@@ -27,7 +27,7 @@ function tree(arr) {
     return newNode;
   }
   let newNode = buildTree(arr);
-  
+
   function minDataValue(nodo) {
     let minV = nodo.date;
     while (nodo.left !== null) {
@@ -41,24 +41,24 @@ function tree(arr) {
     if (tree === null) {
       return node(value);
     } else if (tree.data < value) {
-      tree.left = insert(value, tree.left);
-    } else if (tree.data > value) {
       tree.right = insert(value, tree.right);
+    } else if (tree.data > value) {
+      tree.left = insert(value, tree.left);
     }
     return tree;
   }
   function deleteItem(value, nodo = newNode) {
     if (nodo === null) return nodo;
-    if (value > nodo.data) {
-      deleteItem(value, nodo.right);
-    } else if (value < nodo.data) {
-      deleteItem(value, nodo.left);
+    if (nodo.data < value) {
+      nodo.right = deleteItem(value, nodo.right);
+    } else if (nodo.data > value) {
+      nodo.left = deleteItem(value, nodo.left);
     } else {
       if (nodo.left === null) return nodo.right;
-      if (nodo.right === null) return nodo.left;
+      else if (nodo.right === null) return nodo.left;
 
       nodo.data = minDataValue(nodo.right);
-      nodo.right = deleteItem(nodo.data, nodo.right);
+      nodo.right = deleteItem(value, nodo.right);
     }
     return nodo;
   }
@@ -90,22 +90,23 @@ function tree(arr) {
     return result;
   }
   function preOrder(callback, tree = newNode, preOrderArr = []) {
-    if (tree === null) return ;
+    if (tree === null) return;
     callback ? callback(tree) : "";
     preOrderArr.push(tree.data);
     if (tree.left) preOrder(callback, tree.left, preOrderArr);
     if (tree.right) preOrder(callback, tree.right, preOrderArr);
     return preOrderArr;
   }
-  function inOrder( tree = newNode, inOrderArr = []) {
-    if (tree === null) return[];
-    if(tree.left !== null)inOrder(tree.left, inOrderArr);
-     inOrderArr.push(tree.data);
-    if (tree.right !== null) inOrder(tree.right, inOrderArr);
+  function inOrder(callback, tree = newNode, inOrderArr = []) {
+    if (tree === null) return [];
+    if (tree.left !== null) inOrder(callback, tree.left, inOrderArr);
+    callback ? callback(tree) : "";
+    inOrderArr.push(tree.data);
+    if (tree.right !== null) inOrder(callback, tree.right, inOrderArr);
     return inOrderArr;
   }
   function postOrder(callback, tree = newNode, postOrderArr = []) {
-    if (tree === null) return ;
+    if (tree === null) return;
     postOrder(callback, tree.left, postOrderArr);
     postOrder(callback, tree.right, postOrderArr);
     callback ? callback(tree) : "";
@@ -131,10 +132,10 @@ function tree(arr) {
   }
   function isBalanced(tree = newNode) {
     if (tree === null) return true;
-    let lh = height(tree.left);
-    let rh = height(tree.right);
+    let leftH = height(tree.left);
+    let rightH = height(tree.right);
     if (
-      Math.abs(lh - rh) <= 1 &&
+      Math.abs(leftH - rightH) <= 1 &&
       isBalanced(tree.left) &&
       isBalanced(tree.right)
     )
@@ -145,7 +146,7 @@ function tree(arr) {
   function rebalance() {
     let orderArr = inOrder(null, newNode);
     const rebalanceTree = buildTree(orderArr);
-    return rebalanceTree;
+    return (newNode = rebalanceTree);
   }
   return {
     insert,
@@ -175,22 +176,24 @@ const prettyPrint = (treeNode, prefix = "", isLeft = true) => {
   }
 };
 
-let newFactoryTree = tree([1, 3, 2, 4, 8, 10]);
-prettyPrint(newFactoryTree.newNode);
+let newFactoryTree = tree([1, 3, 2, 4]);
 console.log(newFactoryTree.levelOrder());
-// newFactoryTree.insert(8);
-// newFactoryTree.insert(10);
-// newFactoryTree.insert(11);
-// newFactoryTree.insert(9);
-// newFactoryTree.deleteItem(9);
-console.log(newFactoryTree.find(9)); // null. deleted
-console.log(newFactoryTree.height()); // root height = 4
-console.log(newFactoryTree.height(newFactoryTree.find(10))); // height = 1
-console.log(newFactoryTree.depth(newFactoryTree.find(11))); // depth = 4
-//console.log(newFactoryTree.levelOrder()); // [ [ 3 ], [ 2, 4 ], [ 1, 8 ], [ 10 ], [11] ]
-console.log(newFactoryTree.preOrder()); // [ 3, 2, 1, 4, 8, 10, 11 ]
-console.log(newFactoryTree.inOrder()); // [ 1, 2, 3, 4, 8, 10, 11 ]
-console.log(newFactoryTree.postOrder()); // [ 1, 2, 11, 10, 8, 4, 3 ]
-console.log(newFactoryTree.isBalanced()); // false
+console.log(newFactoryTree.isBalanced());
+newFactoryTree.insert(8);
+newFactoryTree.insert(12);
+newFactoryTree.insert(5);
+newFactoryTree.insert(9);
+newFactoryTree.deleteItem(9);
+prettyPrint(newFactoryTree.newNode);
+console.log(newFactoryTree.find(9));
+console.log(newFactoryTree.height());
+console.log(newFactoryTree.height(newFactoryTree.find(3)));
+console.log(newFactoryTree.depth(newFactoryTree.find(8)));
+console.log(newFactoryTree.levelOrder());
+console.log(newFactoryTree.preOrder());
+console.log(newFactoryTree.inOrder());
+console.log(newFactoryTree.postOrder());
+console.log(newFactoryTree.isBalanced());
 newFactoryTree.rebalance();
-console.log(newFactoryTree.isBalanced()); //true;
+console.log(newFactoryTree.isBalanced());
+prettyPrint(newFactoryTree.newNode);
