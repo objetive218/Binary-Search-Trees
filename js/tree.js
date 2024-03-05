@@ -1,10 +1,12 @@
-import node from "./node";
+function node(data = null, left = null, right = null) {
+  return {
+    data: data,
+    left: left,
+    right: right,
+  };
+}
 
-export default function tree(arr) {
-  arr.sort((a, b) => a - b);
-  let orderArr = arr.filter((value, index, self) => {
-    return self.indexOf(value) === index;
-  });
+function tree(arr) {
   function sortArr(arr) {
     arr.sort((a, b) => a - b);
     return arr.filter((value, index, self) => {
@@ -24,6 +26,8 @@ export default function tree(arr) {
 
     return newNode;
   }
+  let newNode = buildTree(arr);
+  
   function minDataValue(nodo) {
     let minV = nodo.date;
     while (nodo.left !== null) {
@@ -86,26 +90,25 @@ export default function tree(arr) {
     return result;
   }
   function preOrder(callback, tree = newNode, preOrderArr = []) {
-    if (tree === null) return [];
-    callback(tree);
+    if (tree === null) return ;
+    callback ? callback(tree) : "";
     preOrderArr.push(tree.data);
-    if (tree.left) levelOrder(callback, tree.left, preOrderArr);
-    if (tree.right) levelOrder(callback, tree.right, preOrderArr);
+    if (tree.left) preOrder(callback, tree.left, preOrderArr);
+    if (tree.right) preOrder(callback, tree.right, preOrderArr);
     return preOrderArr;
   }
-  function inOrder(callback, tree = newNode, inOrderArr = []) {
-    if (tree === null) return null;
-    inOrder(callback, tree.left, inOrderArr);
-    callback(tree);
-    inOrderArr.push(tree.data);
-    inOrder(callback, tree.right, inOrderArr);
+  function inOrder( tree = newNode, inOrderArr = []) {
+    if (tree === null) return[];
+    if(tree.left !== null)inOrder(tree.left, inOrderArr);
+     inOrderArr.push(tree.data);
+    if (tree.right !== null) inOrder(tree.right, inOrderArr);
     return inOrderArr;
   }
   function postOrder(callback, tree = newNode, postOrderArr = []) {
-    if (tree === null) return null;
-    inOrder(callback, tree.left, postOrderArr);
-    inOrder(callback, tree.right, postOrderArr);
-    callback(tree);
+    if (tree === null) return ;
+    postOrder(callback, tree.left, postOrderArr);
+    postOrder(callback, tree.right, postOrderArr);
+    callback ? callback(tree) : "";
     postOrderArr.push(tree.data);
     return postOrderArr;
   }
@@ -141,11 +144,12 @@ export default function tree(arr) {
 
   function rebalance() {
     let orderArr = inOrder(null, newNode);
-    let rebalanceTree = buildTree(orderArr);
+    const rebalanceTree = buildTree(orderArr);
     return rebalanceTree;
   }
   return {
     insert,
+    newNode,
     deleteItem,
     find,
     levelOrder,
@@ -158,3 +162,35 @@ export default function tree(arr) {
     rebalance,
   };
 }
+const prettyPrint = (treeNode, prefix = "", isLeft = true) => {
+  if (treeNode === null) {
+    return;
+  }
+  if (treeNode?.right !== null) {
+    prettyPrint(treeNode?.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
+  }
+  console.log(`${prefix}${isLeft ? "└── " : "┌── "}${treeNode.data}`);
+  if (treeNode?.left !== null) {
+    prettyPrint(treeNode?.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
+  }
+};
+
+let newFactoryTree = tree([1, 3, 2, 4, 8, 10]);
+prettyPrint(newFactoryTree.newNode);
+console.log(newFactoryTree.levelOrder());
+// newFactoryTree.insert(8);
+// newFactoryTree.insert(10);
+// newFactoryTree.insert(11);
+// newFactoryTree.insert(9);
+// newFactoryTree.deleteItem(9);
+console.log(newFactoryTree.find(9)); // null. deleted
+console.log(newFactoryTree.height()); // root height = 4
+console.log(newFactoryTree.height(newFactoryTree.find(10))); // height = 1
+console.log(newFactoryTree.depth(newFactoryTree.find(11))); // depth = 4
+//console.log(newFactoryTree.levelOrder()); // [ [ 3 ], [ 2, 4 ], [ 1, 8 ], [ 10 ], [11] ]
+console.log(newFactoryTree.preOrder()); // [ 3, 2, 1, 4, 8, 10, 11 ]
+console.log(newFactoryTree.inOrder()); // [ 1, 2, 3, 4, 8, 10, 11 ]
+console.log(newFactoryTree.postOrder()); // [ 1, 2, 11, 10, 8, 4, 3 ]
+console.log(newFactoryTree.isBalanced()); // false
+newFactoryTree.rebalance();
+console.log(newFactoryTree.isBalanced()); //true;
